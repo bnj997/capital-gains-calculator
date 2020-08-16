@@ -105,46 +105,37 @@ const Nab = () => {
     var transArray = [];
     var capGainArray = [];
     var dateSold;
-    var batch;
     var costBase;
     var batchProp;
     var costProp;
     var salesValue;
     var capGain;
-
     for (var i = 0; i <= table.length - 1; i++) {
-      //calculate costbase
       var costBase = table[i].totalCost / table[i].bought
       table[i].costBase = costBase
-
       transArray.push(table[i])
       if (transArray[i].bought < 0) {
         var numStocksSold = -(transArray[i].bought)
         for (var j = 0; j <= transArray.length - 1; j++) {
           if (numStocksSold > 0) {
-            dateSold = transArray[j].date;
-            batch = transArray[j].bought; 
-            costBase = transArray[j].costBase; 
             if (numStocksSold > transArray[j].bought ) {
               numStocksSold = numStocksSold - transArray[j].bought; 
               batchProp = transArray[j].bought; 
-              costProp = batchProp * costBase; 
-              salesValue = batchProp * (transArray[i].totalCost / transArray[i].bought);
-              capGain = salesValue - costProp; 
               transArray[j].bought = 0 
             } 
             else {
               batchProp = numStocksSold;
-              costProp = batchProp * costBase; 
-              salesValue = batchProp * (transArray[i].totalCost / transArray[i].bought); 
-              capGain = salesValue - costProp; 
               transArray[j].bought = transArray[j].bought - numStocksSold 
               numStocksSold = 0 
             }
+            dateSold = transArray[j].date;
+            costBase = transArray[j].costBase; 
+            costProp = batchProp * costBase; 
+            salesValue = batchProp * (transArray[i].totalCost / transArray[i].bought); 
+            capGain = salesValue - costProp; 
             capGainArray.push( 
               {
                 dateSold: dateSold,
-                batch: batch,
                 costBase: costBase,
                 batchProp: batchProp,
                 costProp: costProp, 
