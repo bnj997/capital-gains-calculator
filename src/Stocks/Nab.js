@@ -68,78 +68,78 @@ const Nab = () => {
         totalCost: 1000.72,
       },
     ],
-    // data: [
-    //   { 
-    //     date: '16/03/2020', 
-    //     bought: 49, 
-    //     unitPrice: 20.12, 
-    //     brockerage: 10.00,
-    //     totalCost: 995.88,
-    //   },
-    //   {
-    //     date: '16/03/2020', 
-    //     bought: 47, 
-    //     unitPrice: 21.10, 
-    //     brockerage: 10.00,
-    //     totalCost: 1001.7,
-    //   },
-    //   {
-    //     date: '17/03/2020', 
-    //     bought: 52, 
-    //     unitPrice: 18.95, 
-    //     brockerage: 10.00,
-    //     totalCost: 995.40,
-    //   },
-    //   {
-    //     date: '18/03/2020', 
-    //     bought: 90, 
-    //     unitPrice: 16.70, 
-    //     brockerage: 19.95,
-    //     totalCost: 1522.95,
-    //   },
-    //   {
-    //     date: '18/04/2020', 
-    //     bought: 74, 
-    //     unitPrice: 14.29, 
-    //     brockerage: 19.95,
-    //     totalCost: 1077.04,
-    //   },
-    //   {
-    //     date: '19/03/2020', 
-    //     bought: 100, 
-    //     unitPrice: 11.60, 
-    //     brockerage: 19.95,
-    //     totalCost: 1179.95,
-    //   },
-    //   {
-    //     date: '20/03/2020', 
-    //     bought: 42, 
-    //     unitPrice: 14.10, 
-    //     brockerage: 10.00,
-    //     totalCost: 602.20,
-    //   },
-    //   {
-    //     date: '20/03/2020', 
-    //     bought: 75, 
-    //     unitPrice: 13.75, 
-    //     brockerage: 19.95,
-    //     totalCost: 1051.20,
-    //   },
-    //   {
-    //     date: '25/03/2020', 
-    //     bought: -469, 
-    //     unitPrice: 14.92, 
-    //     brockerage: 19.95,
-    //     totalCost: -6977.53,
-    //   },
-    //   {
-    //     date: '26/03/2020', 
-    //     bought: -60, 
-    //     unitPrice: 16.10, 
-    //     brockerage: 10.00,
-    //     totalCost: -956.00,
-    //   },
-    // ],
+    data: [
+      { 
+        date: '16/03/2020', 
+        bought: 49, 
+        unitPrice: 20.12, 
+        brockerage: 10.00,
+        totalCost: 995.88,
+      },
+      {
+        date: '16/03/2020', 
+        bought: 47, 
+        unitPrice: 21.10, 
+        brockerage: 10.00,
+        totalCost: 1001.7,
+      },
+      {
+        date: '17/03/2020', 
+        bought: 52, 
+        unitPrice: 18.95, 
+        brockerage: 10.00,
+        totalCost: 995.40,
+      },
+      {
+        date: '18/03/2020', 
+        bought: 90, 
+        unitPrice: 16.70, 
+        brockerage: 19.95,
+        totalCost: 1522.95,
+      },
+      {
+        date: '18/04/2020', 
+        bought: 74, 
+        unitPrice: 14.29, 
+        brockerage: 19.95,
+        totalCost: 1077.04,
+      },
+      {
+        date: '19/03/2020', 
+        bought: 100, 
+        unitPrice: 11.60, 
+        brockerage: 19.95,
+        totalCost: 1179.95,
+      },
+      {
+        date: '20/03/2020', 
+        bought: 42, 
+        unitPrice: 14.10, 
+        brockerage: 10.00,
+        totalCost: 602.20,
+      },
+      {
+        date: '20/03/2020', 
+        bought: 75, 
+        unitPrice: 13.75, 
+        brockerage: 19.95,
+        totalCost: 1051.20,
+      },
+      {
+        date: '25/03/2020', 
+        bought: -469, 
+        unitPrice: 14.92, 
+        brockerage: 19.95,
+        totalCost: -6977.53,
+      },
+      {
+        date: '26/03/2020', 
+        bought: -60, 
+        unitPrice: 16.10, 
+        brockerage: 10.00,
+        totalCost: -956.00,
+      },
+    ],
     // data: [
     //   { 
     //     date: '6/01/2020', 
@@ -214,12 +214,12 @@ const Nab = () => {
   }
 
   const addRemainder = (newData) => {
-    // var i = newData.length
-    // while (i--) {
-    //   if (newData[i].bought <= 0) {
-    //     newData.splice(i, 1);
-    //   }
-    // }
+    var i = newData.length
+    while (i--) {
+      if (newData[i].bought <= 0) {
+        newData.splice(i, 1);
+      }
+    }
     setRemainder(() => {
       return newData;
     });
@@ -245,37 +245,36 @@ const Nab = () => {
 
       if (transArray[i].bought < 0) {
         var numStocksSold = -(transArray[i].bought)
-        for (var j = 0; j <= transArray.length - 1; j++) {
-          if (numStocksSold > 0) {
-            if (transArray[j].bought !== 0 ) {
-              if (numStocksSold > transArray[j].bought) {
-                numStocksSold = numStocksSold - transArray[j].bought; 
-                batchProp = transArray[j].bought; 
-                transArray[j].bought = 0 
-              } 
-              else {
-                batchProp = numStocksSold;
-                transArray[j].bought = transArray[j].bought - numStocksSold 
-                numStocksSold = 0 
-              }
-              dateSold = transArray[j].date;
-              costBase = transArray[j].costBase; 
-              costProp = batchProp * costBase; 
-              salesValue = batchProp * (transArray[i].totalCost / transArray[i].bought); 
-              capGain = salesValue - costProp; 
-              addCap( {
-                dateSold: dateSold,
-                costBase: costBase,
-                batchProp: batchProp,
-                costProp: costProp, 
-                salesValue: salesValue,
-                capGain: capGain
-              })
+        var length = transArray.length
+        var j = 0
+        while(numStocksSold > 0 && j < length ) {
+          if (transArray[j].bought > 0 ) {
+            if (numStocksSold > transArray[j].bought) {
+              numStocksSold = numStocksSold - transArray[j].bought; 
+              batchProp = transArray[j].bought; 
+              transArray[j].bought = 0 
+            } 
+            else {
+              batchProp = numStocksSold;
+              transArray[j].bought = transArray[j].bought - numStocksSold 
+              numStocksSold = 0 
             }
-          } else {
-            break;
-          }
-        }
+            dateSold = transArray[j].date;
+            costBase = transArray[j].costBase; 
+            costProp = batchProp * costBase; 
+            salesValue = batchProp * (transArray[i].totalCost / transArray[i].bought); 
+            capGain = salesValue - costProp; 
+            addCap( {
+              dateSold: dateSold,
+              costBase: costBase,
+              batchProp: batchProp,
+              costProp: costProp, 
+              salesValue: salesValue,
+              capGain: capGain
+            })
+          } 
+          j++
+        }      
       }
     }
     addRemainder(transArray)
