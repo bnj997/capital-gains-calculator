@@ -1,32 +1,10 @@
-import React, {useState} from 'react';
-import MaterialTable from "material-table";
-import { Button } from '@material-ui/core';
-import {useCapGain} from '../Formula/capital-gain';
+import React from 'react';
 
 import './Stocks.css';
+import Table from './Table';
 
 const Nab = () => {
-  const [data, setData] = useState({
-    columns: [
-      { 
-        title: 'Date', 
-        field: 'date' },
-      { 
-        title: 'Bought', 
-        field: 'bought' },
-      { 
-        title: 'Unit Price', 
-        field: 'unitPrice', 
-        type: 'numeric' },
-      {
-        title: 'Brockerage',
-        field: 'brockerage',
-      },
-      {
-        title: 'Total Cost',
-        field: 'totalCost',
-      },
-    ],
+
     // data: [
     //   { 
     //     date: '16/03/2020', 
@@ -173,102 +151,47 @@ const Nab = () => {
     //     totalCost: -1711.81,
     //   }
     // ],
-    data: [
-      { 
-        date: '13/03/2020', 
-        bought: 124, 
-        unitPrice: 16.70, 
-        brockerage: 19.95,
-        totalCost: 2090.75,
-      },
-      {
-        date: '16/03/2020', 
-        bought: 58, 
-        unitPrice: 17.30, 
-        brockerage: 19.95,
-        totalCost: 1023.35,
-      },
-      {
-        date: '27/03/2020', 
-        bought: -90, 
-        unitPrice: 16.23, 
-        brockerage: 19.95,
-        totalCost: -1440.75,
-      },
-      {
-        date: '22/04/2020', 
-        bought: 64, 
-        unitPrice: 15.50, 
-        brockerage: 10.00,
-        totalCost: 1002.00,
-      },
-      {
-        date: '12/05/2020', 
-        bought: 64, 
-        unitPrice: 15.50, 
-        brockerage: 10.00,
-        totalCost: 1002.00,
-      }
-    ],
-  });
-
-   
-  const capGainColumns = [
+  const data = [
     { 
-      title: 'Batch Sell Date', 
-      field: 'dateSold' 
-    },
-    { 
-      title: 'Cost Base', 
-      field: 'costBase' 
-    },
-    { 
-      title: 'Portion of Batch Sold', 
-      field: 'batchProp',
-    }, 
-    {
-      title: 'Cost of Portion',
-      field: 'costProp',
+      date: '13/03/2020', 
+      bought: 124, 
+      unitPrice: 16.70, 
+      brockerage: 19.95,
+      totalCost: 2090.75,
     },
     {
-      title: 'Sales Value of Portion',
-      field: 'salesValue',
+      date: '16/03/2020', 
+      bought: 58, 
+      unitPrice: 17.30, 
+      brockerage: 19.95,
+      totalCost: 1023.35,
     },
     {
-      title: 'Capital Gain',
-      field: 'capGain',
+      date: '27/03/2020', 
+      bought: -90, 
+      unitPrice: 16.23, 
+      brockerage: 19.95,
+      totalCost: -1440.75,
     },
-  ]
-
-
-  const {calculateCapGain, capitalGain, stocksRemaining, showResults } = useCapGain();
+    {
+      date: '22/04/2020', 
+      bought: 64, 
+      unitPrice: 15.50, 
+      brockerage: 10.00,
+      totalCost: 1002.00,
+    },
+    {
+      date: '12/05/2020', 
+      bought: 64, 
+      unitPrice: 15.50, 
+      brockerage: 10.00,
+      totalCost: 1002.00,
+    }
+  ];
 
 
   return (
-    <React.Fragment>
-      <MaterialTable
-        title="VTS"
-        columns={data.columns}
-        data={data.data}
-      />
-      <Button onClick={() => calculateCapGain(data.data, "fifo")}> CALCULATE FIFO </Button>
-      <Button onClick={() => calculateCapGain(data.data, "lifo")}> CALCULATE LIFO </Button>
-
-      {showResults && <MaterialTable
-        title="Capital Gain"
-        columns={capGainColumns}
-        data={capitalGain}
-        className="data-table"
-      />}
-
-      {showResults && <MaterialTable 
-        title="Remaining Stocks"
-        columns={data.columns}
-        data={stocksRemaining}
-        className="data-table"
-      />}
-
-    </React.Fragment>
+    <Table data={data} />
   )
 }
 
