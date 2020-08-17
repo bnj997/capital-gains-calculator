@@ -4,7 +4,10 @@ import Nab from './Stocks/Nab';
 
 const App = () => {
   return (
-    <Nab />
+    <div>
+      <h1> CAPITAL GAINS CALCULATOR</h1>
+      <Nab />
+    </div>
   );
 }
 

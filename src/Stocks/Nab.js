@@ -1,6 +1,9 @@
 import React, {useState} from 'react';
 import MaterialTable from "material-table";
-import { Button, TableContainer } from '@material-ui/core';
+import { Button } from '@material-ui/core';
+import {useCapGain} from '../Formula/capital-gain';
+
+import './Stocks.css';
 
 const Nab = () => {
   const [data, setData] = useState({
@@ -170,253 +173,99 @@ const Nab = () => {
     //     totalCost: -1711.81,
     //   }
     // ],
-    // data: [
-    //   { 
-    //     date: '13/03/2020', 
-    //     bought: 124, 
-    //     unitPrice: 16.70, 
-    //     brockerage: 19.95,
-    //     totalCost: 2090.75,
-    //   },
-    //   {
-    //     date: '16/03/2020', 
-    //     bought: 58, 
-    //     unitPrice: 17.30, 
-    //     brockerage: 19.95,
-    //     totalCost: 1023.35,
-    //   },
-    //   {
-    //     date: '27/03/2020', 
-    //     bought: -90, 
-    //     unitPrice: 16.23, 
-    //     brockerage: 19.95,
-    //     totalCost: -1440.75,
-    //   },
-    //   {
-    //     date: '22/04/2020', 
-    //     bought: 64, 
-    //     unitPrice: 15.50, 
-    //     brockerage: 10.00,
-    //     totalCost: 1002.00,
-    //   },
-    //   {
-    //     date: '12/05/2020', 
-    //     bought: 64, 
-    //     unitPrice: 15.50, 
-    //     brockerage: 10.00,
-    //     totalCost: 1002.00,
-    //   }
-    // ],
+    data: [
+      { 
+        date: '13/03/2020', 
+        bought: 124, 
+        unitPrice: 16.70, 
+        brockerage: 19.95,
+        totalCost: 2090.75,
+      },
+      {
+        date: '16/03/2020', 
+        bought: 58, 
+        unitPrice: 17.30, 
+        brockerage: 19.95,
+        totalCost: 1023.35,
+      },
+      {
+        date: '27/03/2020', 
+        bought: -90, 
+        unitPrice: 16.23, 
+        brockerage: 19.95,
+        totalCost: -1440.75,
+      },
+      {
+        date: '22/04/2020', 
+        bought: 64, 
+        unitPrice: 15.50, 
+        brockerage: 10.00,
+        totalCost: 1002.00,
+      },
+      {
+        date: '12/05/2020', 
+        bought: 64, 
+        unitPrice: 15.50, 
+        brockerage: 10.00,
+        totalCost: 1002.00,
+      }
+    ],
   });
 
-  const [showCapGain, setShowCapGain] = useState(false);
-
-  const [capitalGain, setCapitalGain] = useState([]);
-  const [remainder, setRemainder] = useState([]);
-
-
-  const [column, setCol] = useState({
-    columns: [
-      { 
-        title: 'Batch Sell Date', 
-        field: 'dateSold' 
-      },
-      { 
-        title: 'Cost Base', 
-        field: 'costBase' 
-      },
-      { 
-        title: 'Portion of Batch Sold', 
-        field: 'batchProp',
-      }, 
-      {
-        title: 'Cost of Portion',
-        field: 'costProp',
-      },
-      {
-        title: 'Sales Value of Portion',
-        field: 'salesValue',
-      },
-      {
-        title: 'Capital Gain',
-        field: 'capGain',
-      },
-    ],
-  })
-
-  const addCap = (newData) => {
-    setCapitalGain(prevDatas => {
-      return [...prevDatas, newData];
-    });
-  }
-
-  const addRemainder = (newData) => {
-    // var i = newData.length
-    // while (i--) {
-    //   if (newData[i].bought < 0) {
-    //     newData.splice(i, 1);
-    //   }
-    // }
-    setRemainder(() => {
-      return newData;
-    });
-  }
-  
- 
-  const fifoCapGain = (table) => {
-    var netGain = 0;
-    setCapitalGain([])
-    var transArray = [];
-    var dateSold;
-    var costBase;
-    var batchProp;
-    var costProp;
-    var salesValue;
-    var capGain;
-    for (var i = 0; i < table.length; i++) {
-      var costBase = table[i].totalCost / table[i].bought
-      table[i].costBase = costBase
-      var newRow = {...table[i]}
-      transArray.push(newRow)
-      var length = transArray.length
-      if (transArray[length - 1].bought < 0) {
-        var numStocksSold = -(transArray[length - 1].bought)
-        var totalCost = transArray[length - 1].totalCost;
-        var bought = transArray[length - 1].bought
-        while(numStocksSold > 0) {
-          if (numStocksSold > transArray[0].bought) {
-            numStocksSold = numStocksSold - transArray[0].bought; 
-            batchProp = transArray[0].bought; 
-            transArray[0].bought = 0 
-          } 
-          else {
-            batchProp = numStocksSold;
-            transArray[0].bought = transArray[0].bought - numStocksSold 
-            numStocksSold = 0 
-          }
-          dateSold = transArray[0].date;
-          costBase = transArray[0].costBase; 
-          costProp = batchProp * costBase; 
-          salesValue = batchProp * (totalCost / bought); 
-          capGain = salesValue - costProp; 
-          netGain = netGain + capGain;
-          addCap( {
-            dateSold: dateSold,
-            costBase: costBase,
-            batchProp: batchProp,
-            costProp: costProp, 
-            salesValue: salesValue,
-            capGain: capGain
-          })
-          if (transArray[0].bought <= 0) {
-            transArray.shift();
-            length--
-          } 
-        }
-        transArray.splice(length - 1, 1)  
-        length--
-      } 
-    }
-    addCap( {
-      dateSold: '',
-      costBase: '',
-      batchProp: '',
-      costProp: '', 
-      salesValue: '',
-      capGain: netGain
-    })
-    addRemainder(transArray)
-    setShowCapGain(true)
-  };
+   
+  const capGainColumns = [
+    { 
+      title: 'Batch Sell Date', 
+      field: 'dateSold' 
+    },
+    { 
+      title: 'Cost Base', 
+      field: 'costBase' 
+    },
+    { 
+      title: 'Portion of Batch Sold', 
+      field: 'batchProp',
+    }, 
+    {
+      title: 'Cost of Portion',
+      field: 'costProp',
+    },
+    {
+      title: 'Sales Value of Portion',
+      field: 'salesValue',
+    },
+    {
+      title: 'Capital Gain',
+      field: 'capGain',
+    },
+  ]
 
 
-  const lifoCapGain = (table) => {
-    var netGain = 0;
-    setCapitalGain([])
-    var transArray = [];
-    var dateSold;
-    var costBase;
-    var batchProp;
-    var costProp;
-    var salesValue;
-    var capGain;
-    for (var i = 0; i < table.length; i++) {
-      var costBase = table[i].totalCost / table[i].bought
-      table[i].costBase = costBase
-      var newRow = {...table[i]}
-      transArray.push(newRow)
-      var length = transArray.length
-      if (transArray[length - 1].bought < 0) {
-        var numStocksSold = -(transArray[length - 1].bought)
-        var totalCost = transArray[length - 1].totalCost;
-        var bought = transArray[length - 1].bought
-        while(numStocksSold > 0) {
-          if (numStocksSold > transArray[length - 2].bought) {
-            numStocksSold = numStocksSold - transArray[length - 2].bought; 
-            batchProp = transArray[length - 2].bought; 
-            transArray[length - 2].bought = 0 
-          } 
-          else {
-            batchProp = numStocksSold;
-            transArray[length - 2].bought = transArray[length - 2].bought - numStocksSold 
-            numStocksSold = 0 
-          }
-          dateSold = transArray[length - 2].date;
-          costBase = transArray[length - 2].costBase; 
-          costProp = batchProp * costBase; 
-          salesValue = batchProp * (totalCost / bought); 
-          capGain = salesValue - costProp; 
-          netGain = netGain + capGain;
-          addCap( {
-            dateSold: dateSold,
-            costBase: costBase,
-            batchProp: batchProp,
-            costProp: costProp, 
-            salesValue: salesValue,
-            capGain: capGain
-          })
-          if (transArray[length - 2].bought === 0) {
-            transArray.splice(length - 2, 1);
-            length--
-          } 
-        }  
-        transArray.splice(length - 1, 1)  
-        length--
-      } 
-    }
-    addCap( {
-      dateSold: '',
-      costBase: '',
-      batchProp: '',
-      costProp: '', 
-      salesValue: '',
-      capGain: netGain
-    })
-    addRemainder(transArray)
-    setShowCapGain(true)
-  };
+  const {calculateCapGain, capitalGain, stocksRemaining, showResults } = useCapGain();
 
 
   return (
     <React.Fragment>
-      <MaterialTable style={{width: "80%"}}
+      <MaterialTable
         title="VTS"
         columns={data.columns}
         data={data.data}
       />
-      <Button onClick={() => fifoCapGain(data.data)}> CALCULATE FIFO </Button>
-      <Button onClick={() => lifoCapGain(data.data)}> CALCULATE LIFO </Button>
+      <Button onClick={() => calculateCapGain(data.data, "fifo")}> CALCULATE FIFO </Button>
+      <Button onClick={() => calculateCapGain(data.data, "lifo")}> CALCULATE LIFO </Button>
 
-      {showCapGain && <MaterialTable style={{width: "80%"}}
+      {showResults && <MaterialTable
         title="Capital Gain"
-        columns={column.columns}
+        columns={capGainColumns}
         data={capitalGain}
+        className="data-table"
       />}
 
-      {showCapGain && <MaterialTable style={{width: "80%"}}
+      {showResults && <MaterialTable 
         title="Remaining Stocks"
         columns={data.columns}
-        data={remainder}
+        data={stocksRemaining}
+        className="data-table"
       />}
 
     </React.Fragment>
