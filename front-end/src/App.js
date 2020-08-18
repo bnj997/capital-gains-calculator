@@ -6,7 +6,7 @@ import SideDrawer from './UIElements/SideDrawer';
 
 const App = () => {
   const { isLoading, error, sendRequest, clearError } = useHttpClient();
-  const [stockType, setType] = useState('')
+  const [stockType, setType] = useState('VAS')
   const [stockData, setData] = useState([])
 
   useEffect(() => {

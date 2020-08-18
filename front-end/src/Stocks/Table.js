@@ -1,35 +1,103 @@
-import React, {useState} from 'react';
+import React, {useState, useEffect} from 'react';
 import MaterialTable from "material-table";
 import { Button } from '@material-ui/core';
+import { useHttpClient } from '../http-hook';
 import {useCapGain} from '../Formula/capital-gain';
 
 import './Stocks.css';
 
 const Table = props => {
+  const { isLoading, error, sendRequest, clearError } = useHttpClient();
+  const [rowData, setRowData] = useState('');
+  const {calculateCapGain, capitalGain, stocksRemaining, showResults } = useCapGain();
 
-  const [data, setData] = useState({
-    columns: [
-      { 
-        title: 'Date', 
-        field: 'date' },
-      { 
-        title: 'Bought', 
-        field: 'bought' },
-      { 
-        title: 'Unit Price', 
-        field: 'unitPrice', 
-        type: 'numeric' },
-      {
-        title: 'Brockerage',
-        field: 'brockerage',
-      },
-      {
-        title: 'Total Cost',
-        field: 'totalCost',
-      },
-    ],
-  });
+  useEffect(() => {
+    setRowData(props.info)
+  }, [props]);
 
+
+  const processAddition = async newData => {
+    try {
+      await sendRequest(
+        'http://localhost:5000/api/transactions/',
+        'POST',
+        JSON.stringify({
+          date: newData.date,
+          bought: newData.bought,
+          unitPrice: newData.unitPrice,
+          brockerage: newData.brockerage,
+          totalCost: newData.totalCost,
+          stock: props.stock,
+        }),
+        { 'Content-Type': 'application/json' }
+      );
+      setRowData(prevDatas => {
+        return [...prevDatas, newData];
+      });
+    } catch (err) {}
+  }
+
+  const processUpdate =  async (newData, oldData) => {
+    try {
+      await sendRequest(
+        `http://localhost:5000/api/transactions/${oldData._id}`,
+        'PATCH',
+        JSON.stringify({
+          date: newData.date,
+          bought: newData.bought,
+          unitPrice: newData.unitPrice,
+          brockerage: newData.brockerage,
+          totalCost: newData.totalCost,
+        }),
+        { 'Content-Type': 'application/json' }
+      );
+      setRowData((prevDatas) => {
+        const data = [...prevDatas];
+        data[data.indexOf(oldData)] = newData;
+        return data;
+      });
+    } catch (err) {}
+
+  }
+
+  const processDeletion =  async (oldData) => {
+    try {
+      await sendRequest(
+        `http://localhost:5000/api/transactions/${oldData._id}`,
+        'DELETE',
+        { 'Content-Type': 'application/json' }
+      );
+      setRowData(prevDatas => {
+        return prevDatas.filter((transaction) => {
+          return transaction._id !== oldData._id
+        })
+      })
+    } catch (err) {}
+  }
+
+
+
+
+  const transactionColumn = [
+    { 
+      title: 'Date', 
+      field: 'date' },
+    { 
+      title: 'Bought', 
+      field: 'bought' },
+    { 
+      title: 'Unit Price', 
+      field: 'unitPrice', 
+      type: 'numeric' },
+    {
+      title: 'Brockerage',
+      field: 'brockerage',
+    },
+    {
+      title: 'Total Cost',
+      field: 'totalCost',
+    }
+  ]
    
   const capGainColumns = [
     { 
@@ -59,15 +127,22 @@ const Table = props => {
   ]
 
 
-  const {calculateCapGain, capitalGain, stocksRemaining, showResults } = useCapGain();
 
 
   return (
     <React.Fragment>
       <MaterialTable
         title={props.stock}
-        columns={data.columns}
-        data={props.info}
+        columns={transactionColumn}
+        data={rowData}
+        editable={{
+          onRowAdd: (newData) =>
+            processAddition(newData),
+          onRowUpdate: (newData, oldData) =>
+            processUpdate(newData, oldData),
+          onRowDelete: (oldData) =>
+            processDeletion(oldData)
+        }}
       />
       <Button onClick={() => calculateCapGain(props.info, "fifo")}> CALCULATE FIFO </Button>
       <Button onClick={() => calculateCapGain(props.info, "lifo")}> CALCULATE LIFO </Button>
@@ -81,7 +156,7 @@ const Table = props => {
 
       {showResults && <MaterialTable 
         title="Remaining Stocks"
-        columns={data.columns}
+        columns={transactionColumn}
         data={stocksRemaining}
         className="data-table"
       />}
