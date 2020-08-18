@@ -1,0 +1,21 @@
+.side-drawer {
+  position: fixed;
+  height: 100vh;
+  width: 350px;
+  background: grey;
+}
+
+.nav-links {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: left;
+}
+
+.nav-links li {
+  margin: 1rem;
+}
