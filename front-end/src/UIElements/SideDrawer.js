@@ -1,26 +1,37 @@
-import React from 'react';
-
+import React, {useState, useEffect} from 'react';
+import { useHttpClient } from '../http-hook';
 import './SideDrawer.css';
 
-const SideDrawer = props => (
+const SideDrawer = props => {
+  const { isLoading, error, sendRequest, clearError } = useHttpClient();
+  const [stocks, setStocks] = useState([])
 
+  useEffect(() => {
+    const fetchStocks = async () => {
+      try {
+        const responseData = await sendRequest(
+          'http://localhost:5000/api/stocks'
+        );
+        setStocks(responseData.stocks);
+      } catch (err) {}
+    };
+    fetchStocks();
+  }, [sendRequest]);
 
-  <div className="side-drawer" onClick={props.onClick}>
-    <ul className="nav-links">
-      <li onClick={() => props.onChange('VAS')}> 
-        VAS 
-      </li>
-      <li onClick={() => props.onChange('VTS')}> 
-        VTS 
-      </li>
-      <li onClick={() => props.onChange('NAB')}> 
-        NAB 
-      </li>
-      <li onClick={() => props.onChange('ANZ')}> 
-        ANZ 
-      </li>
-    </ul>
-  </div>
-);
+  return (
+    <div className="side-drawer" onClick={props.onClick}>
+      <ul className="nav-links">
+        {stocks.map(function(stock,i) {
+          return (
+            <li onClick={() => props.onChange(stock._id)}> 
+              {stock._id}
+            </li>
+          )
+        })}
+      </ul>
+    </div>
+
+  )
+};
 
 export default SideDrawer;

@@ -6,6 +6,7 @@ import {useCapGain} from '../Formula/capital-gain';
 import './Stocks.css';
 
 const Table = props => {
+
   const [data, setData] = useState({
     columns: [
       { 
@@ -27,7 +28,6 @@ const Table = props => {
         field: 'totalCost',
       },
     ],
-    data: props.stock,
   });
 
    
@@ -65,12 +65,12 @@ const Table = props => {
   return (
     <React.Fragment>
       <MaterialTable
-        title="VTS"
+        title={props.stock}
         columns={data.columns}
-        data={data.data}
+        data={props.info}
       />
-      <Button onClick={() => calculateCapGain(data.data, "fifo")}> CALCULATE FIFO </Button>
-      <Button onClick={() => calculateCapGain(data.data, "lifo")}> CALCULATE LIFO </Button>
+      <Button onClick={() => calculateCapGain(props.info, "fifo")}> CALCULATE FIFO </Button>
+      <Button onClick={() => calculateCapGain(props.info, "lifo")}> CALCULATE LIFO </Button>
 
       {showResults && <MaterialTable
         title="Capital Gain"
