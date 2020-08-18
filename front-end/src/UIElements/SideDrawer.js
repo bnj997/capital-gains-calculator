@@ -1,10 +1,17 @@
 import React, {useState, useEffect} from 'react';
 import { useHttpClient } from '../http-hook';
+import { Button} from "@material-ui/core";
 import './SideDrawer.css';
 
 const SideDrawer = props => {
-  const { isLoading, error, sendRequest, clearError } = useHttpClient();
+  const {sendRequest} = useHttpClient();
   const [stocks, setStocks] = useState([])
+  const [newStock, setNewStock] = useState('');
+
+  const handleChange = (event) => {
+    setNewStock(event.target.value)
+  }
+
 
   useEffect(() => {
     const fetchStocks = async () => {
@@ -18,8 +25,27 @@ const SideDrawer = props => {
     fetchStocks();
   }, [sendRequest]);
 
+
+  const addStock = async (event) => {
+    try {
+      await sendRequest(
+        'http://localhost:5000/api/stocks/',
+        'POST',
+        JSON.stringify({
+          _id: newStock,
+        }),
+        { 'Content-Type': 'application/json' }
+      );
+      setStocks(prevStocks => {
+        return [...prevStocks, newStock];
+      });
+    } catch (err) {}
+    event.preventDefault()
+  }
+
+
   return (
-    <div className="side-drawer" onClick={props.onClick}>
+    <div className="side-drawer">
       <ul className="nav-links">
         {stocks.map(function(stock,i) {
           return (
@@ -29,6 +55,10 @@ const SideDrawer = props => {
           )
         })}
       </ul>
+      <form onSubmit={addStock}>
+        <input value={newStock} onChange={handleChange} id="stock" />
+        <input className="button" type="submit" value="Submit"/> 
+      </form>
     </div>
 
   )

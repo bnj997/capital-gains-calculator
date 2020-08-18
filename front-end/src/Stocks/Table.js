@@ -144,8 +144,8 @@ const Table = props => {
             processDeletion(oldData)
         }}
       />
-      <Button onClick={() => calculateCapGain(props.info, "fifo")}> CALCULATE FIFO </Button>
-      <Button onClick={() => calculateCapGain(props.info, "lifo")}> CALCULATE LIFO </Button>
+      <Button onClick={() => calculateCapGain(rowData, "fifo")}> CALCULATE FIFO </Button>
+      <Button onClick={() => calculateCapGain(rowData, "lifo")}> CALCULATE LIFO </Button>
 
       {showResults && <MaterialTable
         title="Capital Gain"

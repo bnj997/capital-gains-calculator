@@ -16,6 +16,7 @@ export const useCapGain = () => {
       return newData;
     });
   }
+
   const calculateCapGain = (table, type) => {
     setCapitalGain([])
     var netGain = 0;
